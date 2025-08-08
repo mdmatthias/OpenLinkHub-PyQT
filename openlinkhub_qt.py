@@ -1,3 +1,4 @@
+import os
 import sys
 from os import getenv
 
@@ -29,7 +30,8 @@ class OpenLinkHubTray:
         self.app = app
         self.window = window
         self.tray = QSystemTrayIcon()
-        self.tray.setIcon(QIcon("icon.png"))
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.png")
+        self.tray.setIcon(QIcon(getenv("OLH_ICON_PATH", icon_path)))
 
         self.menu = QMenu()
 

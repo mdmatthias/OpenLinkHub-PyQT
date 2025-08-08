@@ -20,8 +20,18 @@ Otherwise, set this env var to your OpenLinkHub url:
 OLH_URL=http://localhost:27003
 ```
 
+Other env vars
+```
+OLH_START_MINIMIZED=1 # Useful if you autostart the app on boot
+OLH_ICON_PATH=/some/path/to/other/tray-icon.png
+```
+
 # Running the app
 
 ```commandline
 python openlinkhub_qt.py &
+```
+If you want to start it minimized:
+```commandline
+OLH_START_MINIMIZED=1 python openlinkhub_qt.py &
 ```
