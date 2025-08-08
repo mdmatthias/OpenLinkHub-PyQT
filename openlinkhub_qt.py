@@ -66,6 +66,6 @@ if __name__ == "__main__":
 
     window = OpenLinkHubWindow()
     tray_app = OpenLinkHubTray(app, window)
-
-    window.show()
+    if int(getenv("OLH_START_MINIMIZED", 0)) == 0:
+        window.show()
     sys.exit(app.exec())
