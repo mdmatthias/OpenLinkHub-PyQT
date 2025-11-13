@@ -21,10 +21,69 @@ class OpenLinkHubWindow(QMainWindow):
         self.browser.setUrl(QUrl(getenv("OLH_URL", "http://localhost:27003")))
         self.setCentralWidget(self.browser)
 
+        self.autoscale_js = """
+        function autoscaleKeyboard() {
+            const keyboard = document.querySelector('[class^="keyboard-"]');
+            if (!keyboard) {
+                return;
+            }
+
+            const container = keyboard.closest('.card') || keyboard.parentElement;
+            if (!container) {
+                return;
+            }
+
+            const containerWidth = container.clientWidth;
+            const keyboardWidth = keyboard.scrollWidth;
+            const scaleRatio = Math.min(1, (containerWidth - 150) / keyboardWidth);
+
+            const newScale = `scale(${scaleRatio})`;
+            const currentScale = keyboard.style.transform;
+
+            if (scaleRatio < 1) {
+                if (currentScale !== newScale) {
+                    keyboard.style.transform = newScale;
+                }
+            } else {
+                if (currentScale !== 'none' && currentScale !== '') {
+                    keyboard.style.transform = 'none';
+                }
+            }
+        }
+
+        autoscaleKeyboard();
+
+        let resizeTimer;
+        window.removeEventListener('resize', window.olhAutoscaleHandler);
+        window.olhAutoscaleHandler = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(autoscaleKeyboard, 30);
+        };
+        window.addEventListener('resize', window.olhAutoscaleHandler);
+
+        const observer = new MutationObserver((mutations) => {
+            autoscaleKeyboard();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        """
+
+        self.browser.loadFinished.connect(self.inject_js)
+
+    def inject_js(self, ok):
+        if ok:
+            self.browser.page().runJavaScript(
+                "if (typeof window.olhAutoscaleHandler === 'undefined') { " +
+                self.autoscale_js +
+                " }"
+            )
+
     def closeEvent(self, event):
         event.ignore()
         self.hide()
-
 class OpenLinkHubTray:
     def __init__(self, app, window):
         self.app = app
