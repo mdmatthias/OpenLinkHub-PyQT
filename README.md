@@ -5,6 +5,8 @@ This app loads OpenLinkHub in a QT app instead of a browser tab.
 Also comes with a simple tray icon to open and close the app.
 
 ![preview.png](preview.png)
+![preview2.png](preview2.png)
+
 # Requirements
 ```
 Python >= 3.9
