@@ -9,7 +9,6 @@ from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtCore import QUrl
 
-
 class OpenLinkHubWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -22,53 +21,7 @@ class OpenLinkHubWindow(QMainWindow):
         self.setCentralWidget(self.browser)
 
         self.autoscale_js = """
-        function autoscaleKeyboard() {
-            const keyboard = document.querySelector('[class^="keyboard-"]');
-            if (!keyboard) {
-                return;
-            }
-
-            const container = keyboard.closest('.card') || keyboard.parentElement;
-            if (!container) {
-                return;
-            }
-
-            const containerWidth = container.clientWidth;
-            const keyboardWidth = keyboard.scrollWidth;
-            const scaleRatio = Math.min(1, (containerWidth - 150) / keyboardWidth);
-
-            const newScale = `scale(${scaleRatio})`;
-            const currentScale = keyboard.style.transform;
-
-            if (scaleRatio < 1) {
-                if (currentScale !== newScale) {
-                    keyboard.style.transform = newScale;
-                }
-            } else {
-                if (currentScale !== 'none' && currentScale !== '') {
-                    keyboard.style.transform = 'none';
-                }
-            }
-        }
-
-        autoscaleKeyboard();
-
-        let resizeTimer;
-        window.removeEventListener('resize', window.olhAutoscaleHandler);
-        window.olhAutoscaleHandler = () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(autoscaleKeyboard, 30);
-        };
-        window.addEventListener('resize', window.olhAutoscaleHandler);
-
-        const observer = new MutationObserver((mutations) => {
-            autoscaleKeyboard();
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+const d=document,w=window;const a=(s,p)=>{const e=d.querySelector(s);if(!e)return;const c=e.closest('.card-body')||e.closest('.card')||e.parentElement;if(!c)return;const r=Math.min(1,Math.max(1,c.clientWidth-p)/e.scrollWidth),ns=`scale(${r})`,cs=e.style.transform;r<1?cs!==ns&&(e.style.transform=ns):cs&&cs!=='none'&&(e.style.transform='none')};const b=(s)=>{const e=d.querySelector(s);e&&e.parentElement&&(e.parentElement.style.overflowX='auto')};const f=()=>{a('[class^="keyboard-"]',150);b('.table.mb-0')};let t;w.removeEventListener('resize',w.olhAutoscaleHandler);w.olhAutoscaleHandler=()=>{clearTimeout(t);t=setTimeout(f,30)};w.addEventListener('resize',w.olhAutoscaleHandler);new MutationObserver(f).observe(d.body,{childList:!0,subtree:!0});f();
         """
 
         self.browser.loadFinished.connect(self.inject_js)
